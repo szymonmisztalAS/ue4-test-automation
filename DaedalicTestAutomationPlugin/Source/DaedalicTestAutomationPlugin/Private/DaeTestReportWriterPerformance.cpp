@@ -25,15 +25,23 @@ void FDaeTestReportWriterPerformance::WriteReport(const TArray<FDaeTestSuiteResu
     }
 
     // Prepare report.
-    FString ContentDir =
-        IPluginManager::Get().FindPlugin(TEXT("DaedalicTestAutomationPlugin"))->GetContentDir();
+    /*
+        Author: Szymon Misztal(Anshar Studios)
+        Workaround for getting ContetDir path, because you can't have non-asset plugin content in packaged build in its default folder -
+        that was the reason why performance reports was empty when i ran test on build instead of editor.
+        I moved ReportTemplates folder to projects Content and allowed it to be copied during packaging process, so now reporter is looking for templates there.
+    */
+    FString ContentDir = FPaths::ProjectContentDir();
+    ContentDir = FPaths::Combine(ContentDir, TEXT("ThirdPartyPlugins\\DaedalicTestAutomationPlugin\\Content"));
+    /*FString ContentDir =
+         IPluginManager::Get().FindPlugin(TEXT("DaedalicTestAutomationPlugin"))->GetContentDir();*/
     FString ReportTemplatePath = FPaths::Combine(ContentDir, TEXT("ReportTemplates"),
-                                                 TEXT("PerformanceReport.template.html"));
+        TEXT("PerformanceReport.template.html"));
     FString MapTemplatePath = FPaths::Combine(ContentDir, TEXT("ReportTemplates"),
-                                              TEXT("PerformanceReportMap.template.html"));
+        TEXT("PerformanceReportMap.template.html"));
     FString BudgetViolationTemplatePath =
         FPaths::Combine(ContentDir, TEXT("ReportTemplates"),
-                        TEXT("PerformanceReportBudgetViolation.template.html"));
+            TEXT("PerformanceReportBudgetViolation.template.html"));
 
     // Write performance budget violations.
     FString MapString;
