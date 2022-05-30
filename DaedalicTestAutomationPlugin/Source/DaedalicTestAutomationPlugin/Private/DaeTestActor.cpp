@@ -170,3 +170,21 @@ void ADaeTestActor::ReceiveOnAct_Implementation(UObject* Parameter)
 {
     FinishAct();
 }
+
+AActor* ADaeTestActor::SpawnBlueprintActorFromParameter(TSoftObjectPtr<UObject> Parameter, FTransform Transform)
+{
+	//FStringAssetReference AssetReferencePath = (Parameter->GetOuter() != nullptr) ? Parameter->GetOuter()->GetPathName() : Parameter->GetPathName();
+	FStringAssetReference AssetReferencePath = Parameter->GetPathName();
+	StaticLoadObject(UObject::StaticClass(), nullptr, *AssetReferencePath.ToString());
+	UBlueprint* GeneratedBlueprint = Cast<UBlueprint>(AssetReferencePath.ResolveObject());
+
+	if (GeneratedBlueprint != nullptr)
+	{
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(GeneratedBlueprint->GeneratedClass, Transform, SpawnParameters);
+		return SpawnedActor;
+	}
+
+	return nullptr;
+}

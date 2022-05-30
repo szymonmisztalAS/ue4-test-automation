@@ -89,6 +89,9 @@ public:
     UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "Assert"))
     void ReceiveOnAssert(UObject* Parameter);
 
+	UFUNCTION(BlueprintCallable)
+	AActor* SpawnBlueprintActorFromParameter(TSoftObjectPtr<UObject> Parameter, FTransform Transform);
+
     /** Event when this test has finished successfully. */
     FDaeTestActorTestSuccessfulSignature OnTestSuccessful;
 
@@ -97,6 +100,7 @@ public:
 
     /** Event when this test has been skipped. */
     FDaeTestActorTestSkippedSignature OnTestSkipped;
+
 
 protected:
     /** How long this test is allowed to run before it fails automatically, in seconds. */
