@@ -171,11 +171,10 @@ void ADaeTestActor::ReceiveOnAct_Implementation(UObject* Parameter)
     FinishAct();
 }
 
-AActor* ADaeTestActor::SpawnBlueprintActorFromParameter(TSoftObjectPtr<UObject> Parameter, FTransform Transform)
+AActor* ADaeTestActor::SpawnBlueprintActorFromParameter(UObject* Parameter, FTransform Transform)
 {
-	//FStringAssetReference AssetReferencePath = (Parameter->GetOuter() != nullptr) ? Parameter->GetOuter()->GetPathName() : Parameter->GetPathName();
+
 	FStringAssetReference AssetReferencePath = Parameter->GetPathName();
-	StaticLoadObject(UObject::StaticClass(), nullptr, *AssetReferencePath.ToString());
 	UBlueprint* GeneratedBlueprint = Cast<UBlueprint>(AssetReferencePath.ResolveObject());
 
 	if (GeneratedBlueprint != nullptr)
@@ -184,6 +183,19 @@ AActor* ADaeTestActor::SpawnBlueprintActorFromParameter(TSoftObjectPtr<UObject> 
 		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(GeneratedBlueprint->GeneratedClass, Transform, SpawnParameters);
 		return SpawnedActor;
+	}
+
+	return nullptr;
+}
+
+UObject* ADaeTestActor::CreateObjectFromParameter(UObject* Parameter)
+{
+	FStringAssetReference AssetReferencePath = Parameter->GetPathName();
+	UBlueprint* GeneratedBlueprint = Cast<UBlueprint>(AssetReferencePath.ResolveObject());
+
+	if (GeneratedBlueprint != nullptr)
+	{
+		return NewObject<UObject>(this, GeneratedBlueprint->GeneratedClass);
 	}
 
 	return nullptr;

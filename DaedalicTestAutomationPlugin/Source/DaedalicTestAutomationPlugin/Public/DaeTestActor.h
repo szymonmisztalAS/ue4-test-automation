@@ -89,9 +89,6 @@ public:
     UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "Assert"))
     void ReceiveOnAssert(UObject* Parameter);
 
-	UFUNCTION(BlueprintCallable)
-	AActor* SpawnBlueprintActorFromParameter(TSoftObjectPtr<UObject> Parameter, FTransform Transform);
-
     /** Event when this test has finished successfully. */
     FDaeTestActorTestSuccessfulSignature OnTestSuccessful;
 
@@ -103,6 +100,14 @@ public:
 
 
 protected:
+	/** Anshar Workaround for issue concerning inability to recast the parameter back from UObject to the base class. */
+	UFUNCTION(BlueprintCallable)
+	UObject* CreateObjectFromParameter(UObject* Parameter);
+
+	/** Anshar Workaround for issue concerning inability to recast the parameter back from UObject to the base class: Spawn a actor passed via parameter. */
+	UFUNCTION(BlueprintCallable)
+	AActor* SpawnBlueprintActorFromParameter(UObject* Parameter, FTransform Transform);
+
     /** How long this test is allowed to run before it fails automatically, in seconds. */
     UPROPERTY(EditAnywhere)
     float TimeoutInSeconds;
